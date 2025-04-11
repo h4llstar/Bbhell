@@ -1,28 +1,30 @@
--- Load Linoria and check for success
 local repo = 'https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/'
 
-local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
-if not Library or typeof(Library.CreateWindow) ~= "function" then
-    warn("Failed to load Linoria Library.")
+-- Load Linoria UI
+local success, Library = pcall(loadstring, game:HttpGet(repo .. 'Library.lua'))
+if not success or not Library then
+    warn("Failed to load Linoria.")
     return
 end
 
+Library = Library()
+
+-- Addons
 local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
 local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
 
--- Create main window
+-- Wait for PlayerGui
+local player = game:GetService("Players").LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Create Window
 local Window = Library:CreateWindow({
     Title = 'BGS Infinity | Wave',
     Center = true,
     AutoShow = true
 })
 
-if not Window or typeof(Window.AddTab) ~= "function" then
-    warn("Failed to create Linoria Window.")
-    return
-end
-
--- Setup tabs
+-- Confirm Tabs work
 local MainTab = Window:AddTab('Main')
 local UITab = Window:AddTab('UI Settings')
 
@@ -30,7 +32,7 @@ local UITab = Window:AddTab('UI Settings')
 local Toggles = {}
 local selectedEgg = nil
 
--- Get dynamic egg list
+-- Gather egg list
 local eggList = {}
 for _, island in ipairs(workspace.Worlds["The Overworld"].Islands:GetChildren()) do
 	for _, obj in ipairs(island:GetChildren()) do
@@ -40,19 +42,19 @@ for _, island in ipairs(workspace.Worlds["The Overworld"].Islands:GetChildren())
 	end
 end
 
--- Add Toggles and Dropdown
+-- Setup UI elements after everything is confirmed
 MainTab:AddToggle('AutoBlow', {
 	Text = 'Auto Blow',
 	Default = false
-}):OnChanged(function(state)
-	Toggles.AutoBlow = state
+}):OnChanged(function(val)
+	Toggles.AutoBlow = val
 end)
 
 MainTab:AddToggle('AutoSell', {
 	Text = 'Auto Sell',
 	Default = false
-}):OnChanged(function(state)
-	Toggles.AutoSell = state
+}):OnChanged(function(val)
+	Toggles.AutoSell = val
 end)
 
 MainTab:AddDropdown('EggDropdown', {
@@ -67,11 +69,11 @@ end)
 MainTab:AddToggle('AutoHatch', {
 	Text = 'Auto Hatch',
 	Default = false
-}):OnChanged(function(state)
-	Toggles.AutoHatch = state
+}):OnChanged(function(val)
+	Toggles.AutoHatch = val
 end)
 
--- Background loops
+-- Loops
 task.spawn(function()
 	while task.wait() do
 		if Toggles.AutoBlow then
@@ -96,7 +98,7 @@ task.spawn(function()
 	end
 end)
 
--- Setup UI settings
+-- UI Persistence
 ThemeManager:SetLibrary(Library)
 SaveManager:SetLibrary(Library)
 SaveManager:IgnoreThemeSettings()
