@@ -16,11 +16,10 @@ local autoSell = false
 local selectedEgg = nil
 
 local eggList = {}
-local eggFolder = workspace:FindFirstChild("Eggs")
 
-if eggFolder then
-	for _, egg in ipairs(eggFolder:GetChildren()) do
-		table.insert(eggList, egg.Name)
+for _, obj in ipairs(workspace:GetDescendants()) do
+	if obj:IsA("Model") and obj:FindFirstChild("Egg") then
+		table.insert(eggList, obj.Name)
 	end
 end
 
@@ -80,7 +79,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-	while task.wait(0.01) do
+	while task.wait(0.1) do
 		if autoGum then
 			pcall(function()
 				game:GetService("ReplicatedStorage")
