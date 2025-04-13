@@ -18,10 +18,11 @@ local selectedEgg = nil
 local eggList = {}
 
 for _, obj in ipairs(workspace:GetDescendants()) do
-	if obj:IsA("Model") and obj:FindFirstChild("Egg") then
-		table.insert(eggList, obj.Name)
+	if obj.Name == "Egg" and obj.Parent and obj.Parent:IsA("Model") then
+		table.insert(eggList, obj.Parent.Name)
 	end
 end
+
 
 selectedEgg = eggList[1] or nil
 
