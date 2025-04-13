@@ -15,7 +15,6 @@ local autoGum = false
 local autoSell = false
 local selectedEgg = nil
 
--- Egg list from workspace.Eggs
 local eggList = {}
 local eggFolder = workspace:FindFirstChild("Eggs")
 
@@ -81,7 +80,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-	while task.wait(2) do
+	while task.wait(0.01) do
 		if autoGum then
 			pcall(function()
 				game:GetService("ReplicatedStorage")
@@ -97,7 +96,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-	while task.wait(3) do
+	while task.wait(0.1) do
 		if autoSell then
 			pcall(function()
 				game:GetService("ReplicatedStorage")
