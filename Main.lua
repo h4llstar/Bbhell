@@ -15,36 +15,26 @@ local autoGum = false
 local autoSell = false
 local selectedEgg = nil
 
+-- Egg list from workspace.Eggs
 local eggList = {}
-repeat
-	task.wait(1)
-	eggList = {}
-	local worlds = workspace:WaitForChild("Worlds", 10)
-	if worlds then
-		local overworld = worlds:FindFirstChild("The Overworld")
-		if overworld and overworld:FindFirstChild("Islands") then
-			for _, island in ipairs(overworld.Islands:GetChildren()) do
-				for _, obj in ipairs(island:GetChildren()) do
-					if obj:FindFirstChild("Egg") then
-						table.insert(eggList, obj.Name)
-					end
-				end
-			end
-		end
-	end
-until #eggList > 0
+local eggFolder = workspace:FindFirstChild("Eggs")
 
-selectedEgg = eggList[1]
+if eggFolder then
+	for _, egg in ipairs(eggFolder:GetChildren()) do
+		table.insert(eggList, egg.Name)
+	end
+end
+
+selectedEgg = eggList[1] or nil
 
 MainTab:CreateDropdown({
 	Name = "Select Egg",
 	Options = eggList,
-	CurrentOption = selectedEgg,
+	CurrentOption = selectedEgg or "None",
 	Callback = function(egg)
 		selectedEgg = egg
 	end
 })
-
 
 MainTab:CreateToggle({
 	Name = "Auto Hatch",
