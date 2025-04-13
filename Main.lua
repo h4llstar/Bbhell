@@ -15,18 +15,27 @@ local autoGum = false
 local autoSell = false
 local selectedEgg = nil
 
--- Egg list
 local eggList = {}
-for _, island in ipairs(workspace.Worlds["The Overworld"].Islands:GetChildren()) do
-	for _, obj in ipairs(island:GetChildren()) do
-		if obj:FindFirstChild("Egg") then
-			table.insert(eggList, obj.Name)
+repeat
+	task.wait(1)
+	eggList = {}
+	local worlds = workspace:WaitForChild("Worlds", 10)
+	if worlds then
+		local overworld = worlds:FindFirstChild("The Overworld")
+		if overworld and overworld:FindFirstChild("Islands") then
+			for _, island in ipairs(overworld.Islands:GetChildren()) do
+				for _, obj in ipairs(island:GetChildren()) do
+					if obj:FindFirstChild("Egg") then
+						table.insert(eggList, obj.Name)
+					end
+				end
+			end
 		end
 	end
-end
+until #eggList > 0
+
 selectedEgg = eggList[1]
 
--- Dropdown for eggs
 MainTab:CreateDropdown({
 	Name = "Select Egg",
 	Options = eggList,
@@ -36,7 +45,7 @@ MainTab:CreateDropdown({
 	end
 })
 
--- Auto Hatch toggle
+
 MainTab:CreateToggle({
 	Name = "Auto Hatch",
 	CurrentValue = false,
@@ -45,7 +54,6 @@ MainTab:CreateToggle({
 	end
 })
 
--- Auto Gum toggle
 MainTab:CreateToggle({
 	Name = "Auto Bubble",
 	CurrentValue = false,
@@ -54,7 +62,6 @@ MainTab:CreateToggle({
 	end
 })
 
--- Auto Sell toggle
 MainTab:CreateToggle({
 	Name = "Auto Sell",
 	CurrentValue = false,
@@ -63,7 +70,6 @@ MainTab:CreateToggle({
 	end
 })
 
--- Hatch Loop
 task.spawn(function()
 	while task.wait(1.5) do
 		if autoHatch and selectedEgg then
@@ -84,7 +90,6 @@ task.spawn(function()
 	end
 end)
 
--- Auto Bubble Loop
 task.spawn(function()
 	while task.wait(2) do
 		if autoGum then
@@ -101,7 +106,6 @@ task.spawn(function()
 	end
 end)
 
--- Auto Sell Loop
 task.spawn(function()
 	while task.wait(3) do
 		if autoSell then
