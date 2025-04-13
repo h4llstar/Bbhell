@@ -77,6 +77,28 @@ local AutoFarm = FarmTab:CreateToggle({
 	end,
 })
 
+FarmTab:CreateButton({
+	Name = "Unlock All Islands (Teleport Only)",
+	Callback = function()
+		local char = game.Players.LocalPlayer.Character
+		if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+
+		local root = char.HumanoidRootPart
+		local originalPosition = root.Position
+
+		for _, island in pairs(workspace.Worlds["The Overworld"].Islands:GetChildren()) do
+			local teleportPoint = island:FindFirstChild("Teleport") or island:FindFirstChild("Portal") or island:FindFirstChildWhichIsA("Part")
+			if teleportPoint then
+				root.CFrame = teleportPoint.CFrame + Vector3.new(0, 5, 0)
+				task.wait(0.5)
+			end
+		end
+			
+		task.wait(0.5)
+		root.CFrame = CFrame.new(originalPosition + Vector3.new(0, 5, 0))
+	end,
+})
+
 local ItemsTab = Window:CreateTab("Items", "rewind")
 
 local AutoDoggyOn = false
