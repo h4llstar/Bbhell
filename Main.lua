@@ -1,38 +1,21 @@
-local repo = 'https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/'
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua"))()
 
--- Load Linoria UI
-local success, Library = pcall(loadstring, game:HttpGet(repo .. 'Library.lua'))
-if not success or not Library then
-    warn("Failed to load Linoria.")
-    return
-end
-
-Library = Library()
-
--- Addons
-local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
-local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
-
--- Wait for PlayerGui
-local player = game:GetService("Players").LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
--- Create Window
-local Window = Library:CreateWindow({
-    Title = 'BGS Infinity | Wave',
-    Center = true,
-    AutoShow = true
+local Window = Rayfield:CreateWindow({
+	Name = "BGSIHub",
+	LoadingTitle = "Loading...",
+	LoadingSubtitle = "Bubble Gum Simulator INFINITY",
+	ConfigurationSaving = {
+		Enabled = false
+	}
 })
 
--- Confirm Tabs work
-local MainTab = Window:AddTab('Main')
-local UITab = Window:AddTab('UI Settings')
-
--- Internal state
-local Toggles = {}
+local MainTab = Window:CreateTab("Auto Farm")
+local autoHatch = false
+local autoGum = false
+local autoSell = false
 local selectedEgg = nil
 
--- Gather egg list
+-- Egg list
 local eggList = {}
 for _, island in ipairs(workspace.Worlds["The Overworld"].Islands:GetChildren()) do
 	for _, obj in ipairs(island:GetChildren()) do
@@ -41,68 +24,96 @@ for _, island in ipairs(workspace.Worlds["The Overworld"].Islands:GetChildren())
 		end
 	end
 end
+selectedEgg = eggList[1]
 
--- Setup UI elements after everything is confirmed
-MainTab:AddToggle('AutoBlow', {
-	Text = 'Auto Blow',
-	Default = false
-}):OnChanged(function(val)
-	Toggles.AutoBlow = val
-end)
+-- Dropdown for eggs
+MainTab:CreateDropdown({
+	Name = "Select Egg",
+	Options = eggList,
+	CurrentOption = selectedEgg,
+	Callback = function(egg)
+		selectedEgg = egg
+	end
+})
 
-MainTab:AddToggle('AutoSell', {
-	Text = 'Auto Sell',
-	Default = false
-}):OnChanged(function(val)
-	Toggles.AutoSell = val
-end)
+-- Auto Hatch toggle
+MainTab:CreateToggle({
+	Name = "Auto Hatch",
+	CurrentValue = false,
+	Callback = function(val)
+		autoHatch = val
+	end
+})
 
-MainTab:AddDropdown('EggDropdown', {
-	Values = eggList,
-	Default = 1,
-	Multi = false,
-	Text = 'Select Egg'
-}):OnChanged(function(val)
-	selectedEgg = val
-end)
+-- Auto Gum toggle
+MainTab:CreateToggle({
+	Name = "Auto Bubble",
+	CurrentValue = false,
+	Callback = function(val)
+		autoGum = val
+	end
+})
 
-MainTab:AddToggle('AutoHatch', {
-	Text = 'Auto Hatch',
-	Default = false
-}):OnChanged(function(val)
-	Toggles.AutoHatch = val
-end)
+-- Auto Sell toggle
+MainTab:CreateToggle({
+	Name = "Auto Sell",
+	CurrentValue = false,
+	Callback = function(val)
+		autoSell = val
+	end
+})
 
--- Loops
+-- Hatch Loop
 task.spawn(function()
-	while task.wait() do
-		if Toggles.AutoBlow then
-			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+	while task.wait(1.5) do
+		if autoHatch and selectedEgg then
+			local hatchCount = 1
+			pcall(function()
+				local data = require(game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("GameUI"):WaitForChild("EggUI")).EggData
+				hatchCount = data.MaxMulti or 1
+			end)
+
+			game:GetService("ReplicatedStorage")
+				:WaitForChild("Shared")
+				:WaitForChild("Framework")
+				:WaitForChild("Network")
+				:WaitForChild("Remote")
+				:WaitForChild("Event")
+				:FireServer("HatchEgg", selectedEgg, hatchCount)
 		end
 	end
 end)
 
+-- Auto Bubble Loop
 task.spawn(function()
-	while task.wait(1) do
-		if Toggles.AutoSell then
-			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
+	while task.wait(2) do
+		if autoGum then
+			pcall(function()
+				game:GetService("ReplicatedStorage")
+					:WaitForChild("Shared")
+					:WaitForChild("Framework")
+					:WaitForChild("Network")
+					:WaitForChild("Remote")
+					:WaitForChild("Event")
+					:FireServer("BlowBubble")
+			end)
 		end
 	end
 end)
 
+-- Auto Sell Loop
 task.spawn(function()
-	while task.wait() do
-		if Toggles.AutoHatch and selectedEgg then
-			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", selectedEgg, 1)
+	while task.wait(3) do
+		if autoSell then
+			pcall(function()
+				game:GetService("ReplicatedStorage")
+					:WaitForChild("Shared")
+					:WaitForChild("Framework")
+					:WaitForChild("Network")
+					:WaitForChild("Remote")
+					:WaitForChild("Event")
+					:FireServer("SellBubble")
+			end)
 		end
 	end
 end)
-
--- UI Persistence
-ThemeManager:SetLibrary(Library)
-SaveManager:SetLibrary(Library)
-SaveManager:IgnoreThemeSettings()
-SaveManager:SetIgnoreIndexes({})
-SaveManager:SetFolder('Wave/BGSInfinity')
-SaveManager:BuildConfigSection(UITab)
-ThemeManager:ApplyToTab(UITab)
