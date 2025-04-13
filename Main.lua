@@ -14,19 +14,37 @@ local autoHatch = false
 local autoGum = false
 local autoSell = false
 local selectedEgg = nil
-
 local eggList = {}
+local currentDropdown
 
-for _, obj in ipairs(workspace:GetDescendants()) do
-	if obj.Name == "Egg" and obj.Parent and obj.Parent:IsA("Model") then
-		table.insert(eggList, obj.Parent.Name)
+local function refreshEggList()
+	local newList = {}
+	local overworld = workspace:FindFirstChild("Worlds"):FindFirstChild("The Overworld")
+	if overworld then
+		local islands = overworld:FindFirstChild("Islands")
+		if islands then
+			for _, island in ipairs(islands:GetChildren()) do
+				local eggsFolder = island:FindFirstChild("Eggs")
+				if eggsFolder then
+					for _, egg in ipairs(eggsFolder:GetChildren()) do
+						table.insert(newList, egg.Name)
+					end
+				end
+			end
+		end
+	end
+
+	if currentDropdown then
+		currentDropdown:SetOptions(newList)
+	end
+
+	eggList = newList
+	if not selectedEgg and #eggList > 0 then
+		selectedEgg = eggList[1]
 	end
 end
 
-
-selectedEgg = eggList[1] or nil
-
-MainTab:CreateDropdown({
+currentDropdown = MainTab:CreateDropdown({
 	Name = "Select Egg",
 	Options = eggList,
 	CurrentOption = selectedEgg or "None",
@@ -34,6 +52,14 @@ MainTab:CreateDropdown({
 		selectedEgg = egg
 	end
 })
+
+refreshEggList()
+
+task.spawn(function()
+	while task.wait(5) do
+		refreshEggList()
+	end
+end)
 
 MainTab:CreateToggle({
 	Name = "Auto Hatch",
