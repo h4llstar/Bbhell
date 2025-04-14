@@ -3,7 +3,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
 	Name = "BGSI Hub",
 	Icon = 0,
-	LoadingTitle = "BubbleGum Simulator Infinity Cheat",
+	LoadingTitle = "BubbleGum Simulator Infinity ",
 	LoadingSubtitle = "Loading...",
 	Theme = "Default",
 
@@ -192,6 +192,104 @@ local AutoEgg = EggsTab:CreateToggle({
 		end
 	end,
 })
+
+local RiftsTab = Window:CreateTab("Rifts", "rewind")
+local RiftText = RiftsTab:CreateSection("Allows you to view all rifts and teleport to them")
+
+local riftsPath = {}
+
+local rift1 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[1].Display.CFrame}):Play()
+   end,
+})
+
+local rift2 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[2].Display.CFrame}):Play()
+   end,
+})
+
+local rift3 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[3].Display.CFrame}):Play()
+   end,
+})
+
+local rift4 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[4].Display.CFrame}):Play()
+   end,
+})
+
+local rift5 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[5].Display.CFrame}):Play()
+   end,
+})
+
+local rift6 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[6].Display.CFrame}):Play()
+   end,
+})
+
+local rift7 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[7].Display.CFrame}):Play()
+   end,
+})
+
+local rift8 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[8].Display.CFrame}):Play()
+   end,
+})
+
+local rift9 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[9].Display.CFrame}):Play()
+   end,
+})
+
+local rift10 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[10].Display.CFrame}):Play()
+   end,
+})
+
+local rift11 = RiftsTab:CreateButton({
+   Name = "",
+   Callback = function()
+      TweenService:Create(Player.Character.HumanoidRootPart, Info, {CFrame = riftsPath[11].Display.CFrame}):Play()
+   end,
+})
+
+local rifts = {rift1, rift2, rift3, rift4, rift5, rift6, rift7, rift8, rift9, rift10, rift11}
+
+local while3 = coroutine.create(function()
+	while task.wait(2) do
+		for _,riftBtn in pairs(rifts) do
+			riftBtn:Set("")
+		end
+		table.clear(riftsPath)
+		for i,rift in pairs(workspace.Rendered.Rifts:GetChildren()) do
+			table.insert(riftsPath, rift)
+			rifts[i]:Set(rift.Name)
+		end
+	end
+end)
+coroutine.resume(while3)
 
 local while1 = coroutine.create(function()
 	while wait(10) do
