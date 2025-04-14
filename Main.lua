@@ -193,6 +193,34 @@ local AutoEgg = EggsTab:CreateToggle({
 	end,
 })
 
+local FastHatchOn = false
+local DisableAnim = false
+
+local FastHatch = EggsTab:CreateToggle({
+	Name = "Fast Hatch",
+	Value = false,
+	Flag = "ToggleFastHatch",
+	Callback = function(Value)
+		FastHatchOn = Value
+	end,
+})
+
+local DisableAnimToggle = EggsTab:CreateToggle({
+	Name = "Disable Hatch Animation",
+	Value = false,
+	Flag = "ToggleNoAnim",
+	Callback = function(Value)
+		DisableAnim = Value
+		if Value then
+			for _, func in pairs(getgc(true)) do
+				if typeof(func) == "function" and getinfo(func).name == "PlayHatchAnimation" and islclosure(func) then
+					hookfunction(func, function(...) return end)
+				end
+			end
+		end
+	end,
+})
+
 local while1 = coroutine.create(function()
 	while wait(10) do
 		if AutoChestsOn then
@@ -242,9 +270,11 @@ local while2 = coroutine.create(function()
 		if AutoSellOn then
 			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
 		end
-		if AutoEggOn then
+		if AutoEggOn and SelectedEgg ~= "" then
+	for i = 1, (FastHatchOn and 3 or 1) do
+		task.spawn(function()
 			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", SelectedEgg, CurrentEggsAmount)
-		end
+		end)
 	end
-end)
+end
 coroutine.resume(while2)
