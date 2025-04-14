@@ -271,9 +271,11 @@ local while2 = coroutine.create(function()
 			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
 		end
 		if AutoEggOn and SelectedEgg ~= "" then
-	for i = 1, (FastHatchOn and 3 or 1) do
-		task.spawn(function()
-			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", SelectedEgg, CurrentEggsAmount)
+	           for i = 1, (FastHatchOn and 3 or 1) do
+		     task.spawn(function()
+			pcall(function()
+				game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", SelectedEgg, CurrentEggsAmount)
+			end)
 		end)
 	end
 end
