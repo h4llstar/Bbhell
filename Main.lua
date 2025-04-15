@@ -2,9 +2,6 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local TweenService = game:GetService("TweenService")
 local Info = TweenInfo.new(10)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local HttpService = game:GetService("HttpService")
-local Pets = require(ReplicatedStorage.Shared.Data.Pets)
-local LocalDataService = require(ReplicatedStorage.Client.Framework.Services.LocalData)
 local Player = game.Players.LocalPlayer
 
 local Window = Rayfield:CreateWindow({
@@ -187,133 +184,7 @@ EggsTab:CreateToggle({
     end
 })
 
--- Webhook Notifications
-local WebhookTab = Window:CreateTab("Webhook", "rewind")
-_G.WebhookURL = ""
-
-local LegendaryPets = {}
-for name, pet in pairs(Pets) do
-    if pet.Rarity == "Legendary" then
-        table.insert(LegendaryPets, name)
-    end
-end
-
-local function convertToShorter(number, kind)
-    if kind == "seconds" then
-        return math.floor(number / 3600) .. "h " .. math.floor((number % 3600) / 60) .. "m " .. (number % 60) .. "s"
-    elseif kind == "hatches" then
-        return string.format("%.2fk", number / 1000)
-    elseif kind == "bubbles" then
-        return number < 1e6 and number or (number < 1e9 and string.format("%.2fm", number / 1e6) or string.format("%.2fb", number / 1e9))
-    end
-end
-
-local function getStats()
-    local data = LocalDataService:Get()
-    local total = 0
-    for _, v in pairs(data.Pets) do total += v.Amount or 0 end
-    return {
-        playTime = convertToShorter(data.Stats.Playtime or 0, "seconds"),
-        hatches = convertToShorter(data.Stats.Hatches or 0, "hatches"),
-        bubbles = convertToShorter(data.Stats.Bubbles or 0, "bubbles"),
-        totalPets = total,
-        gems = data.Gems
-    }
-end
-
-local function getImageThumbnail(assetId)
-    local id = assetId:match("rbxassetid://(%d+)")
-    if not id then return nil end
-    local result = syn.request({
-        Url = "https://thumbnails.roblox.com/v1/assets?assetIds=" .. id .. "&size=420x420&format=png&isCircular=false",
-        Method = "GET",
-        Headers = { ["Content-Type"] = "application/json" }
-    })
-    local data = HttpService:JSONDecode(result.Body)
-    return data.data[1] and data.data[1].imageUrl or nil
-end
-
-local WebhookHandler = {}
-WebhookHandler.__index = WebhookHandler
-
-function WebhookHandler.new()
-    local self = setmetatable({}, WebhookHandler)
-    self.remoteEvent = ReplicatedStorage.Shared.Framework.Network.Remote.Event
-    self.webhookUrl = _G.WebhookURL
-    self:initialize()
-    return self
-end
-
-function WebhookHandler:initialize()
-    self.remoteEvent.OnClientEvent:Connect(function(...)
-        self:handleEvent(...)
-    end)
-end
-
-function WebhookHandler:handleEvent(...)
-    local args = { ... }
-    if args[1] == "HatchEgg" and typeof(args[2]) == "table" then
-        for _, pet in ipairs(args[2].Pets or {}) do
-            if pet.Pet and table.find(LegendaryPets, pet.Pet.Name) then
-                self:sendWebhook(pet.Pet)
-            end
-        end
-    end
-end
-
-function WebhookHandler:sendWebhook(petData)
-    local info = Pets[petData.Name]
-    local image = info.Images and info.Images.Normal and getImageThumbnail(info.Images.Normal) or nil
-    local stats = getStats()
-
-    local embed = {
-        title = "Legendary Pet Hatched!",
-        description = Player.Name .. " just hatched a **" .. petData.Name .. "**!",
-        color = 0xFF9900,
-        fields = {
-            { name = "Pet Name", value = petData.Name, inline = true },
-            { name = "Rarity", value = info.Rarity or "Unknown", inline = true },
-            { name = "Shiny", value = petData.Shiny and "Yes" or "No", inline = true },
-            { name = "Gems", value = convertToShorter(stats.gems, "bubbles"), inline = true },
-            { name = "Total Pets", value = convertToShorter(stats.totalPets, "hatches"), inline = true },
-            { name = "Playtime", value = stats.playTime, inline = true },
-            { name = "Hatches", value = stats.hatches, inline = true },
-            { name = "Bubbles", value = stats.bubbles, inline = true }
-        },
-        footer = {
-            text = "Made By West | " .. os.date("%Y-%m-%d %H:%M:%S")
-        },
-        thumbnail = image and { url = image } or nil
-    }
-
-    local payload = HttpService:JSONEncode({
-        username = "Legendary Pet Notifier",
-        avatar_url = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. Player.UserId .. "&width=420&height=420&format=png",
-        embeds = { embed }
-    })
-
-    pcall(function()
-        syn.request({
-            Url = self.webhookUrl,
-            Method = "POST",
-            Headers = { ["Content-Type"] = "application/json" },
-            Body = payload
-        })
-    end)
-end
-
-WebhookTab:CreateInput({
-    Name = "Webhook URL",
-    PlaceholderText = "Paste your Discord webhook here",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(state)
-        if state and state:match("^https://") then
-            _G.WebhookURL = state
-            WebhookHandler.new()
-        end
-    end,
-})
-
+   
 local RiftsTab = Window:CreateTab("Rifts", "rewind")
 local RiftText = RiftsTab:CreateSection("Allows you to view all rifts and teleport to them")
 
