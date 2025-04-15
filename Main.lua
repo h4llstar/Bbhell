@@ -1,10 +1,6 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local TweenService = game:GetService("TweenService")
 local Info = TweenInfo.new(10)
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local HttpService = game:GetService("HttpService")
-local Pets = require(ReplicatedStorage.Shared.Data.Pets)
-local LocalDataService = require(ReplicatedStorage.Client.Framework.Services.LocalData)
 local Player = game.Players.LocalPlayer
 
 local Window = Rayfield:CreateWindow({
