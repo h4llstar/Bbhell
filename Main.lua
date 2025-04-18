@@ -69,6 +69,18 @@ for _, folder in pairs(workspace.Rendered:GetChildren()) do
     end
 end
 
+local EggsFolder = workspace
+for _,folder in pairs(workspace.Rendered:GetChildren()) do
+	if folder.Name == "Chunker" then
+		for _,v in pairs(folder:GetChildren()) do
+			if string.find(v.Name, "Egg") then
+				EggsFolder = folder
+				break
+			end
+		end
+	end
+end
+
 local FarmTab = Window:CreateTab("Farm", "rewind")
 
 local AutoBlowOn = false
@@ -161,6 +173,27 @@ EggsTab:CreateSlider({
     Suffix = "Eggs",
     CurrentValue = 1,
     Callback = function(v) CurrentEggsAmount = v end,
+})
+
+local PriorEggOn = false
+local PriorEgg = EggsTab:CreateToggle({
+	Name = "Priority on eggs with multiplier",
+	Value = false,
+	Flag = "Toggle999",
+	Callback = function(Value)
+		PriorEggOn = Value
+	end,
+})
+
+local curPos = Vector3.new(0, 0, 0)
+local curPosText = EggsTab:CreateSection("Position: 0, 0, 0")
+
+local setPos = EggsTab:CreateButton({
+   Name = "Update AFK Position",
+   Callback = function()
+	curPos = Player.Character.HumanoidRootPart.Position
+	curPosText:Set(`Position: {curPos}`)
+   end,
 })
 
 local AutoEggOn = false
