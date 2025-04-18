@@ -4,6 +4,27 @@ local Info = TweenInfo.new(10)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game.Players.LocalPlayer
 
+for _,barrier in pairs(workspace.Worlds:FindFirstChild("The Overworld").Barrier:GetChildren()) do
+	barrier.CanCollide = false
+end
+
+local teleporting = false
+local function teleport(pos)
+	if not telepoting then
+		teleporting = true
+		local prew = Player.Character.Humanoid.JumpPower
+		local mag = (Player.Character.HumanoidRootPart.Position - Vector3.new(pos.X, Player.Character.HumanoidRootPart.Position.Y, pos.Z)).Magnitude
+		Player.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Player.Character.HumanoidRootPart.Position.X, 20, Player.Character.HumanoidRootPart.Position.Z))
+		Player.Character.Humanoid.JumpPower = 1
+       		 TweenService:Create(Player.Character.HumanoidRootPart, TweenInfo.new(mag/40, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(pos.X, Player.Character.HumanoidRootPart.Position.Y, pos.Z))}):Play()
+		task.wait(mag/40)
+		Player.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
+		task.wait(0.2)
+		Player.Character.Humanoid.JumpPower = prew
+		teleporting = false
+	end
+end
+
 local Window = Rayfield:CreateWindow({
     Name = "Weed",
     Icon = 0,
