@@ -238,112 +238,113 @@ EggsTab:CreateToggle({
     end
 })
 
-   
 local RiftsTab = Window:CreateTab("Rifts", "rewind")
 local RiftText = RiftsTab:CreateSection("Allows you to view all rifts and teleport to them")
 
 local riftsPath = {}
 
-local function teleport(id)
-	local closestIslandMag = 99999999
-	local closestIslandName = ""
-	for _,island in pairs(workspace.Worlds:WaitForChild("The Overworld").Islands:GetChildren()) do
-		local mag = (riftsPath[id].Display.Position - island.Island.UnlockHitbox.Position).Magnitude
-		if mag < closestIslandMag and island.Island.UnlockHitbox.Position.Y > riftsPath[id].Display.Position.Y then
-			closestIslandMag = mag
-			closestIslandName = island.Name
-		end
-	end
-	game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("Teleport", `Workspace.Worlds.The Overworld.Islands.{closestIslandName}.Island.Portal.Spawn`)
-	task.wait(0.5)
-        Player.Character.Humanoid.Jump = true
-        task.wait(0.5)
-        TweenService:Create(Player.Character.HumanoidRootPart, TweenInfo.new(10), {CFrame = riftsPath[id].Display.CFrame}):Play()
-end
-
-local Rift2Text = RiftsTab:CreateSection("Still in development")
-
 local rift1 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(1)
+      teleport(riftsPath[1].Display.Position)
    end,
 })
 
 local rift2 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(2)
+      teleport(riftsPath[2].Display.Position)
    end,
 })
 
 local rift3 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(3)
+      teleport(riftsPath[3].Display.Position)
    end,
 })
 
 local rift4 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(4)
+      teleport(riftsPath[4].Display.Position)
    end,
 })
 
 local rift5 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(5)
+      teleport(riftsPath[5].Display.Position)
    end,
 })
 
 local rift6 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(6)
+      teleport(riftsPath[6].Display.Position)
    end,
 })
 
 local rift7 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(7)
+      teleport(riftsPath[7].Display.Position)
    end,
 })
 
 local rift8 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(8)
+      teleport(riftsPath[8].Display.Position)
    end,
 })
 
 local rift9 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(9)
+      teleport(riftsPath[9].Display.Position)
    end,
 })
 
 local rift10 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(10)
+      teleport(riftsPath[10].Display.Position)
    end,
 })
 
 local rift11 = RiftsTab:CreateButton({
    Name = "",
    Callback = function()
-      teleport(11)
+      teleport(riftsPath[11].Display.Position)
    end,
 })
 
 local rifts = {rift1, rift2, rift3, rift4, rift5, rift6, rift7, rift8, rift9, rift10, rift11}
 
+for _,rift in pairs(workspace.Rendered.Rifts:GetChildren()) do
+	rift.Display.CanCollide = false
+	for _,a in pairs(rift.Sign.Sign:GetChildren()) do
+		a.CanCollide = false
+	end
+end
+
+workspace.Rendered.Rifts.ChildAdded:Connect(function(rift)
+	rift.Display.CanCollide = false
+	for _,a in pairs(rift.Sign.Sign:GetChildren()) do
+		a.CanCollide = false
+	end
+end)
+
+for _,mountain in pairs(workspace.Worlds:FindFirstChild("The Overworld").Decoration.Mountains:GetChildren()) do
+    for _,part in pairs(mountain:GetChildren()) do
+        part.CanCollide = false
+    end
+end
+
 local while3 = coroutine.create(function()
 	while task.wait(2) do
+		local riftForTeleport = nil
 		for _,riftBtn in pairs(rifts) do
 			riftBtn:Set("")
 		end
@@ -353,16 +354,37 @@ local while3 = coroutine.create(function()
 			local betterName = string.gsub(string.gsub(rift.Name, "-", " "), "(%a)([%w]*)", function(first, rest)
   				return string.upper(first) .. rest
 			end)
+			if PriorEggOn and betterName == SelectedEgg and AutoEggOn then
+				if riftForTeleport then
+					if tonumber(string.sub(riftForTeleport.Display.SurfaceGui.Icon.Luck.Text, 2)) < tonumber(string.sub(rift.Display.SurfaceGui.Icon.Luck.Text, 2)) then
+						needToTeleport = rift
+					end
+				else
+					riftForTeleport = rift
+				end
+			end
 			if string.find(rift.Name, "egg") then
 				rifts[i]:Set(`{betterName} ({rift.Display.SurfaceGui.Timer.Text}) ({rift.Display.SurfaceGui.Icon.Luck.Text})`)
 			else
 				rifts[i]:Set(`{betterName} ({rift.Display.SurfaceGui.Timer.Text})`)
 			end
 		end
+		if riftForTeleport then
+			local mag = (Player.Character.HumanoidRootPart.Position - riftForTeleport.Display.Position).Magnitude
+			if mag > 50 then
+				teleport(riftForTeleport.Display.Position)
+			end
+		else
+			if AutoEggOn then
+				local mag = (Player.Character.HumanoidRootPart.Position - curPos).Magnitude
+				if mag > 10 then
+					teleport(curPos)
+				end
+			end
+		end
 	end
 end)
 coroutine.resume(while3)
-
 
 local while1 = coroutine.create(function()
 	while task.wait(10) do
@@ -377,6 +399,14 @@ local while1 = coroutine.create(function()
 			for i = 1, 3 do
 				for v = 1, 12 do
 					game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", i)
+					task.wait(0.1)
+				end
+			end
+		end
+		if AutoShop2On then
+			for i = 1, 3 do
+				for v = 1, 12 do
+					game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", i)
 					task.wait(0.1)
 				end
 			end
@@ -415,6 +445,8 @@ local while2 = coroutine.create(function()
 		end
 		if AutoEggOn then
 			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", SelectedEgg, CurrentEggsAmount)
+		else
+			AutoEgg:Set(false)
 		end
 	end
 end)
