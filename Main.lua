@@ -134,6 +134,16 @@ ItemsTab:CreateToggle({
     Callback = function(v) AutoShopOn = v end,
 })
 
+local AutoShop2On = false
+local AutoShop2 = ItemsTab:CreateToggle({
+	Name = "Auto Blackmarket",
+	Value = false,
+	Flag = "Toggle1000",
+	Callback = function(Value)
+		AutoShop2On = Value
+	end,
+})
+
 local AutoTicketOn = false
 ItemsTab:CreateToggle({
     Name = "Auto Claim Wheel Tickets",
