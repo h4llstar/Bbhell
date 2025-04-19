@@ -4,15 +4,22 @@ local Info = TweenInfo.new(10)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game.Players.LocalPlayer
 
+queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+Player.OnTeleport:Connect(function(State)
+        queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/h4llstar/Bbhell/refs/heads/main/Main.lua'))()")
+end)
+
 for _,barrier in pairs(workspace.Worlds:FindFirstChild("The Overworld").Barrier:GetChildren()) do
 	barrier.CanCollide = false
 end
 
 local function tp(pos)
+	if Player.Character.HumanoidRootPart.Position.Y < 35 then
+		Player.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Player.Character.HumanoidRootPart.Position.X, 35, Player.Character.HumanoidRootPart.Position.Z))
+	end
 	local mag = (Player.Character.HumanoidRootPart.Position - Vector3.new(pos.X, Player.Character.HumanoidRootPart.Position.Y, pos.Z)).Magnitude
-	Player.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Player.Character.HumanoidRootPart.Position.X, 35, Player.Character.HumanoidRootPart.Position.Z))
-       	TweenService:Create(Player.Character.HumanoidRootPart, TweenInfo.new(mag/42, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(pos.X, Player.Character.HumanoidRootPart.Position.Y, pos.Z))}):Play()
-	task.wait(mag/42)
+       	TweenService:Create(Player.Character.HumanoidRootPart, TweenInfo.new(mag/38, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(pos.X, Player.Character.HumanoidRootPart.Position.Y, pos.Z))}):Play()
+	task.wait(mag/38)
 	for i = 1, 50 do
 		Player.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
 		task.wait(0.01)
