@@ -162,7 +162,7 @@ EggsTab:CreateDropdown({
 local CurrentEggsAmount = 1
 EggsTab:CreateSlider({
     Name = "How many eggs to open",
-    Range = {1, 6},
+    Range = {1, 17},
     Increment = 1,
     Suffix = "Eggs",
     CurrentValue = 1,
