@@ -127,13 +127,6 @@ ItemsTab:CreateToggle({
     Callback = function(v) AutoWheelOn = v end,
 })
 
-local AutoMysteryOn = false
-ItemsTab:CreateToggle({
-    Name = "Auto Mystery box",
-    Value = false,
-    Callback = function(v) AutoMysteryOn = v end,
-})
-
 local EggsTab = Window:CreateTab("Eggs", "rewind")
 EggsTab:CreateSection("This is necessary to open the eggs a little faster")
 
@@ -239,10 +232,6 @@ local while1 = coroutine.create(function()
 		if AutoDoggyOn then
 			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("DoggyJumpWin", 3)
 		end
-                if AutoMysteryOn then
-			game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event")
-			end
-
 		if AutoTicketOn then
 			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimFreeWheelSpin")
 		end
