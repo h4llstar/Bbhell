@@ -53,17 +53,6 @@ for _, folder in pairs(workspace.Rendered:GetChildren()) do
     end
 end
 
-local EggsFolder = workspace
-for _,folder in pairs(workspace.Rendered:GetChildren()) do
-	if folder.Name == "Chunker" then
-		for _,v in pairs(folder:GetChildren()) do
-			if string.find(v.Name, "Egg") then
-				EggsFolder = folder
-				break
-			end
-		end
-	end
-end
 
 local FarmTab = Window:CreateTab("Farm", "rewind")
 
@@ -169,15 +158,7 @@ EggsTab:CreateSlider({
     Callback = function(v) CurrentEggsAmount = v end,
 })
 
-local PriorEggOn = false
-local PriorEgg = EggsTab:CreateToggle({
-	Name = "Priority on eggs with multiplier",
-	Value = false,
-	Flag = "Toggle999",
-	Callback = function(Value)
-		PriorEggOn = Value
-	end,
-})
+
 
 local AutoEggOn = false
 EggsTab:CreateToggle({
@@ -276,21 +257,12 @@ local while2 = coroutine.create(function()
 		if AutoBlowOn then
 			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
 		end
-		print(CurrentSellAmount)
-		print(tonumber(string.gsub(string.match(Player.PlayerGui.ScreenGui.HUD.Left.Currency.Bubble.Frame.Label.Text, '>([%d,]+)<font'), ',', '')))
-		if AutoSellOn and not teleporting and tonumber(string.gsub(string.match(Player.PlayerGui.ScreenGui.HUD.Left.Currency.Bubble.Frame.Label.Text, '>([%d,]+)<font'), ',', '')) >= CurrentSellAmount then
-			local csell = coroutine.create(Sell)
-			coroutine.resume(csell)
-		end
-		if AutoEggOn then
-				game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", SelectedEgg, CurrentEggsAmount)
+		if AutoSellOn then
+			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
 			end
-		else
-			AutoEgg:Set(false)
+		if AutoEggOn then
+			game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", SelectedEgg, CurrentEggsAmount)
 		end
 	end
 end)
 coroutine.resume(while2)
-
-
-
