@@ -5,10 +5,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game.Players.LocalPlayer
 
 
-for _,barrier in pairs(workspace.Worlds:FindFirstChild("The Overworld").Barrier:GetChildren()) do
-	barrier.CanCollide = false
-end
-
 local Window = Rayfield:CreateWindow({
     Name = "Weed",
     Icon = 0,
