@@ -4,26 +4,9 @@ local Info = TweenInfo.new(10)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game.Players.LocalPlayer
 
-queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-Player.OnTeleport:Connect(function(State)
-        queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/h4llstar/Bbhell/refs/heads/main/Main.lua'))()")
-end)
 
 for _,barrier in pairs(workspace.Worlds:FindFirstChild("The Overworld").Barrier:GetChildren()) do
 	barrier.CanCollide = false
-end
-
-local function tp(pos)
-	if Player.Character.HumanoidRootPart.Position.Y < 35 then
-		Player.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Player.Character.HumanoidRootPart.Position.X, 35, Player.Character.HumanoidRootPart.Position.Z))
-	end
-	local mag = (Player.Character.HumanoidRootPart.Position - Vector3.new(pos.X, Player.Character.HumanoidRootPart.Position.Y, pos.Z)).Magnitude
-       	TweenService:Create(Player.Character.HumanoidRootPart, TweenInfo.new(mag/38, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(pos.X, Player.Character.HumanoidRootPart.Position.Y, pos.Z))}):Play()
-	task.wait(mag/38)
-	for i = 1, 50 do
-		Player.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
-		task.wait(0.01)
-	end
 end
 
 local Window = Rayfield:CreateWindow({
@@ -196,16 +179,6 @@ local PriorEgg = EggsTab:CreateToggle({
 	end,
 })
 
-local AutoAuraOn = false
-local AutoAura = EggsTab:CreateToggle({
-	Name = "Auto Aura Egg",
-	Value = false,
-	Flag = "Toggle1111",
-	Callback = function(Value)
-		AutoAuraOn = Value
-	end,
-})
-
 local AutoEggOn = false
 EggsTab:CreateToggle({
     Name = "Open Eggs",
@@ -248,184 +221,6 @@ EggsTab:CreateToggle({
     end
 })
 
-local RiftsTab = Window:CreateTab("Rifts", "rewind")
-local RiftText = RiftsTab:CreateSection("Allows you to view all rifts and teleport to them")
-
-local riftsPath = {}
-
-local rift1 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[1].Display.Position)
-   end,
-})
-
-local rift2 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[2].Display.Position)
-   end,
-})
-
-local rift3 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[3].Display.Position)
-   end,
-})
-
-local rift4 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[4].Display.Position)
-   end,
-})
-
-local rift5 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[5].Display.Position)
-   end,
-})
-
-local rift6 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[6].Display.Position)
-   end,
-})
-
-local rift7 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[7].Display.Position)
-   end,
-})
-
-local rift8 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[8].Display.Position)
-   end,
-})
-
-local rift9 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[9].Display.Position)
-   end,
-})
-
-local rift10 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[10].Display.Position)
-   end,
-})
-
-local rift11 = RiftsTab:CreateButton({
-   Name = "",
-   Callback = function()
-	local teleport = coroutine.create(tp)
-	coroutine.resume(teleport, riftsPath[11].Display.Position)
-   end,
-})
-
-local ExtraTab = Window:CreateTab("Extra", "rewind")
-
-local Rejoin = ExtraTab:CreateButton({
-   Name = "Rejoin",
-   Callback = function()
-	game:GetService("TeleportService"):Teleport(85896571713843)
-   end,
-})
-
-local rifts = {rift1, rift2, rift3, rift4, rift5, rift6, rift7, rift8, rift9, rift10, rift11}
-
-for _,rift in pairs(workspace.Rendered.Rifts:GetChildren()) do
-	rift.Display.CanCollide = false
-	for _,a in pairs(rift.Sign:GetChildren()) do
-		if a:IsA("Part") then
-			a.CanCollide = false
-		else
-			for _,b in pairs(a:GetChildren()) do
-				b.CanCollide = false
-			end
-		end
-	end
-end
-
-workspace.Rendered.Rifts.ChildAdded:Connect(function(rift)
-	task.wait(1)
-	rift.Display.CanCollide = false
-	for _,a in pairs(rift.Sign:GetChildren()) do
-		if a:IsA("BasePart") then
-			a.CanCollide = false
-		else
-			for _,b in pairs(a:GetChildren()) do
-				b.CanCollide = false
-			end
-		end
-	end
-end)
-
-for _,mountain in pairs(workspace.Worlds:FindFirstChild("The Overworld").Decoration.Mountains:GetChildren()) do
-    for _,part in pairs(mountain:GetChildren()) do
-        part.CanCollide = false
-    end
-end
-
-local while3 = coroutine.create(function()
-	while task.wait(1) do
-		table.clear(riftsPath)
-		for _,riftBtn in pairs(rifts) do
-			riftBtn:Set("")
-		end
-		for i,rift in pairs(workspace.Rendered.Rifts:GetChildren()) do
-			if not rift:FindFirstChild("Display") then continue end
-			if not rift.Display:FindFirstChild("SurfaceGui") then continue end
-			if not rift.Display.SurfaceGui:FindFirstChild("Timer") then continue end
-			if string.find(rift.Name, "egg") and not rift.Display.SurfaceGui:FindFirstChild("Icon") then continue end
-			local betterName = string.gsub(string.gsub(rift.Name, "-", " "), "(%a)([%w]*)", function(first, rest)
-  				return string.upper(first) .. rest
-			end)
-			table.insert(riftsPath, rift)
-			if string.find(rift.Name, "egg") or string.find(rift.Name, "event") then
-				if betterName == "Man Egg" then
-					betterName = "Aura Egg"
-				elseif betterName == "Event 1" then
-					betterName = "Bunny Egg"
-				elseif betterName == "Event 2" then
-					betterName = "Pastel Egg"
-				end
-				rifts[i]:Set(`{betterName} ({rift.Display.SurfaceGui.Timer.Text}) ({rift.Display.SurfaceGui.Icon.Luck.Text})`)
-			else
-				rifts[i]:Set(`{betterName} ({rift.Display.SurfaceGui.Timer.Text})`)
-			end
-			if not rift:FindFirstChild("Died") then
-				local died = Instance.new("StringValue", rift)
-				died.Name = "Died"
-				if string.find(rift.Name, "event") and tonumber(string.sub(rift.Display.SurfaceGui.Icon.Luck.Text, 2)) == 25 then
-					SendMessage(`> # :partying_face:﻿ x25 {betterName} Was Found At ~{math.round(rift.Display.Position.Y - 8)}m. <@&1361772075270017054> \n > ## Time Remaining {rift.Display.SurfaceGui.Timer.Text} \n > ### the link won't work if it's a private server \n > [Click to join](https://h4llstar.github.io/roblox-redirect/?placeId={game.PlaceId}&gameInstanceId={game.JobId})`, 1)
-				end
-				if string.find(rift.Name, "man-egg") then
-					SendMessage(`> # :partying_face:﻿ {tonumber(string.sub(rift.Display.SurfaceGui.Icon.Luck.Text, 2))} {betterName} Was Found At ~{math.round(rift.Display.Position.Y - 8)}m. @everyone \n > ## Time Remaining {rift.Display.SurfaceGui.Timer.Text} \n > ### the link won't work if it's a private server \n > [Click to join](https://h4llstar.github.io/roblox-redirect/?placeId={game.PlaceId}&gameInstanceId={game.JobId})`, 1)
-				end
-			end
-		end
-	end
-end)
-coroutine.resume(while3)
 
 local while1 = coroutine.create(function()
 	while task.wait(10) do
@@ -470,12 +265,6 @@ local while1 = coroutine.create(function()
 end)
 coroutine.resume(while1)
 
-local function Sell()
-	Selling = true
-	Player.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-70.75, 6859.23, 120.47))
-	task.wait(0.5)
-	Selling = false
-end
 local while2 = coroutine.create(function()
 	while task.wait(0.1) do
 		if AutoFarmOn then
@@ -494,9 +283,6 @@ local while2 = coroutine.create(function()
 			coroutine.resume(csell)
 		end
 		if AutoEggOn then
-			if auraEgg then
-				game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", "Man Egg", CurrentEggsAmount)
-			else
 				game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", SelectedEgg, CurrentEggsAmount)
 			end
 		else
@@ -506,79 +292,5 @@ local while2 = coroutine.create(function()
 end)
 coroutine.resume(while2)
 
-local auraEgg = false
-local while4 = coroutine.create(function()
-	while task.wait(2) do
-		auraEgg = false
-		local EggOnRift = nil
-		for _,rift in pairs(workspace.Rendered.Rifts:GetChildren()) do
-			if not rift:FindFirstChild("Display") then continue end
-			if not rift.Display:FindFirstChild("SurfaceGui") then continue end
-			if not rift.Display.SurfaceGui:FindFirstChild("Timer") then continue end
-			if string.find(rift.Name, "egg") and not rift.Display.SurfaceGui:FindFirstChild("Icon") then continue end
-			local betterName = string.gsub(string.gsub(rift.Name, "-", " "), "(%a)([%w]*)", function(first, rest)
-  				return string.upper(first) .. rest
-			end)
-			if betterName == "Man Egg" then
-				auraEgg = true
-				EggOnRift = rift
-			end
-			if betterName == "Event 1" then
-				betterName = "Bunny Egg"
-			elseif betterName == "Event 2" then
-				betterName = "Pastel Egg"
-			end
-			if betterName == SelectedEgg and not auraEgg then
-				if EggOnRift then
-					if tonumber(string.sub(rift.Display.SurfaceGui.Icon.Luck.Text, 2)) > tonumber(string.sub(EggOnRift.Display.SurfaceGui.Icon.Luck.Text, 2)) then
-						if string.find(rift.Display.SurfaceGui.Timer.Text, "seconds") and tonumber(string.match(rift.Display.SurfaceGui.Timer.Text, "%d+")) > 15 then
-						else
-							EggOnRift = rift
-						end
-					end
-				else
-					if string.find(rift.Display.SurfaceGui.Timer.Text, "seconds") and tonumber(string.match(rift.Display.SurfaceGui.Timer.Text, "%d+")) > 15 then
-					else
-						EggOnRift = rift
-					end
-				end
-			end
-		end
-		if not Selling and not teleporting then
-			if AutoEggOn and SelectedEgg then
-				if PriorEggOn and EggOnRift then
-					local mag = (Player.Character.HumanoidRootPart.Position - EggOnRift.Display.Position).Magnitude
-					if mag > 50 then
-						game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.FastTravel.Spawn")
-						task.wait(1)
-						local teleport = coroutine.create(tp)
-						coroutine.resume(teleport, EggOnRift.Display.Position)
-						task.wait(((Player.Character.HumanoidRootPart.Position - Vector3.new(EggOnRift.Display.Position.X, Player.Character.HumanoidRootPart.Position.Y, EggOnRift.Display.Position.Z)).Magnitude/38)+0.4)
-					end
-				else
-					local event = false
-					if not EggsFolder:FindFirstChild(SelectedEgg) then
-						if SelectedEgg == "Pastel Egg" or SelectedEgg == "Bunny Egg" then
-							event = true
-							game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Event.Portal.Spawn")
-							task.wait(1)
-							local teleport = coroutine.create(tp)
-							coroutine.resume(teleport, Vector3.new(-396.6, 12013, -56.8))
-							task.wait(((Player.Character.HumanoidRootPart.Position - Vector3.new(-396.6, 12013, -56.8)).Magnitude/38)+0.4)
-						else
-							game.ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.FastTravel.Spawn")
-							task.wait(1)
-						end
-					end
-					local mag = (Player.Character.HumanoidRootPart.Position - EggsFolder:FindFirstChild(SelectedEgg).Prompt.Position).Magnitude
-					if mag > 15 then
-						local teleport = coroutine.create(tp)
-						coroutine.resume(teleport, EggsFolder:FindFirstChild(SelectedEgg).Prompt.Position)
-						task.wait(((Player.Character.HumanoidRootPart.Position - Vector3.new(EggsFolder:FindFirstChild(SelectedEgg).Prompt.Position.X, Player.Character.HumanoidRootPart.Position.Y, EggsFolder:FindFirstChild(SelectedEgg).Prompt.Position.Z)).Magnitude/38)+0.4)
-					end
-				end
-			end
-		end
-	end
-end)
-coroutine.resume(while4)
+
+
